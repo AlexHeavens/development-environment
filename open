@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# Pass-through arguments to container, overriding interactive mode.
+run_arguments=$@
+interactive_arguments=''
+if [ -z "$run_arguments" ]; then
+  interactive_arguments='--interactive --tty'
+fi
+
+docker run --rm \
+    --hostname $(hostname) \
+	  --volume /tmp/.X11-unix:/tmp/.X11-unix --env "DISPLAY=$DISPLAY" \
+	  $interactive_arguments \
+    development-environment $run_arguments

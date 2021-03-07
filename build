@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+# Build args ensure container's basic user permissions match host.
+docker build \
+  --tag development-environment . \
+	  --build-arg "user=$(whoami)" \
+	  --build-arg "user_id=$(id --user)" \
+	  --build-arg "group_id=$(id --group)"
