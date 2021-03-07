@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+development_environment="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+function test_command_in_development_container() {
+    command=$1
+    expected_output_component=$2
+
+    output=$($development_environment/open $command)
+
+    printf "'$expected_output_component' in '$command': "
+    if [[ "$output" != *"$expected_output_component"* ]]; then
+        printf "failed, actually '$output'\n"
+        exit 1
+    else
+        printf 'passed\n'
+    fi
+}
+
+test_command_in_development_container 'git --version' 'git version'
+test_command_in_development_container 'firefox --version' 'Mozilla Firefox'
+test_command_in_development_container 'docker --version' 'Docker version'
+test_command_in_development_container 'docker-compose --version' 'docker-compose version'
