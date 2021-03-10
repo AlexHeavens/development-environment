@@ -26,11 +26,11 @@ RUN apt-get update && apt-get install --assume-yes \
 	vim curl htop tldr tree apt-file locate # basic terminal use
 
 # GUI
-run apt-get update && apt-get install --assume-yes \
+RUN apt-get update && apt-get install --assume-yes \
 	firefox vlc xclip
 
 # Development
-run apt-get update && apt-get install --assume-yes \
+RUN apt-get update && apt-get install --assume-yes \
 	git tig meld docker docker-compose python3 python3-pip python3-venv jq
 
 USER $user
