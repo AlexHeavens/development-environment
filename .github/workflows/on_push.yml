@@ -19,6 +19,9 @@ jobs:
           file: docker/Dockerfile
           push: true
           tags: aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
+          cache-from: |
+            aheavens/development-environment:main
+            aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
     outputs:
        image: aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
 
