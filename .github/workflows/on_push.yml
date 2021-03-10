@@ -18,12 +18,15 @@ jobs:
         with:
           file: docker/Dockerfile
           push: true
-          tags: aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
+          tags: |
+            aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
+            aheavens/development-environment:${{ env.CI_SHA_SHORT }}
           cache-from: |
             aheavens/development-environment:main
             aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
+            aheavens/development-environment:${{ env.CI_SHA_SHORT }}
     outputs:
-       image: aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
+       image: aheavens/development-environment:${{ env.CI_SHA_SHORT }}
 
   test:
     needs: publish
