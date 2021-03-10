@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install --assume-yes \
 	git tig meld docker docker-compose python3 python3-pip python3-venv jq
 
 # For traceability, in situ testing
-COPY . /docker
+COPY ./* /docker/
 
 USER $user
 CMD bash

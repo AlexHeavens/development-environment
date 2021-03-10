@@ -1,12 +1,30 @@
 name: On Push
 on: push
+
 jobs:
-  test:
+
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - run: |
-          mock_DISPLAY=:0.0 # no X11 in CI
-          DISPLAY=$mock_DISPLAY \
-            docker-compose --file docker/docker-compose.test.yml up
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: aheavens
+          password: ${{ secrets.DOCKER_REGISTRY_ACCESS_TOKEN }}
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - name: Build and push to Docker registry
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          file: docker/Dockerfile
+          push: true
+          tags: aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
+    outputs:
+       image: aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
+
+  test:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - run:
+          docker run --entrypoint /docker/test ${{ needs.publish.outputs.image }}
