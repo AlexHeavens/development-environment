@@ -4,9 +4,13 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+# Pass-through arguments to build.
+build_arguments=$@
+
 # Build args ensure container's basic user permissions match host.
 docker build \
   --tag development-environment docker \
 	  --build-arg "user=$(whoami)" \
 	  --build-arg "user_id=$(id --user)" \
-	  --build-arg "group_id=$(id --group)"
+	  --build-arg "group_id=$(id --group)" \
+    $build_arguments
