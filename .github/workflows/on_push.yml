@@ -3,8 +3,34 @@ on: push
 
 jobs:
 
-  publish:
+  publish_base:
     runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: aheavens
+          password: ${{ secrets.DOCKER_REGISTRY_ACCESS_TOKEN }}
+      - uses: FranzDiebold/github-env-vars-action@v2
+      - name: Build and push to Docker registry
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          file: docker/Dockerfile-base
+          push: true
+          tags: |
+            aheavens/development-environment-base:${{ env.CI_REF_NAME_SLUG }}
+            aheavens/development-environment-base:${{ env.CI_SHA_SHORT }}
+          cache-from: |
+            aheavens/development-environment-base:${{ env.CI_SHA_SHORT }}
+            aheavens/development-environment-base:${{ env.CI_REF_NAME_SLUG }}
+            aheavens/development-environment-base:main
+    outputs:
+       tag: aheavens/development-environment-base:${{ env.CI_SHA_SHORT }}
+
+  publish_example_local:
+    runs-on: ubuntu-latest
+    needs: publish_base
     steps:
       - name: Login to Docker registry
         uses: docker/login-action@v1
@@ -18,19 +44,24 @@ jobs:
         with:
           file: docker/Dockerfile
           push: true
+          build-args: |
+            user=tester
+            user_id=11111
+            group_id=22222
           tags: |
-            aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
-            aheavens/development-environment:${{ env.CI_SHA_SHORT }}
+            aheavens/development-environment-example-local:${{ env.CI_REF_NAME_SLUG }}
+            aheavens/development-environment-example-local:${{ env.CI_SHA_SHORT }}
           cache-from: |
-            aheavens/development-environment:main
-            aheavens/development-environment:${{ env.CI_REF_NAME_SLUG }}
-            aheavens/development-environment:${{ env.CI_SHA_SHORT }}
+            aheavens/development-environment-example-local:${{ env.CI_SHA_SHORT }}
+            aheavens/development-environment-example-local:${{ env.CI_REF_NAME_SLUG }}
+            aheavens/development-environment-example-local:main
     outputs:
-       image: aheavens/development-environment:${{ env.CI_SHA_SHORT }}
+      tag: aheavens/development-environment-example-local:${{ env.CI_SHA_SHORT }}
 
   test:
-    needs: publish
+    needs: [publish_example_local]
     runs-on: ubuntu-latest
     steps:
+      - uses: docker-practice/actions-setup-docker@master
       - run:
-          docker run --entrypoint /docker/test ${{ needs.publish.outputs.image }}
+          docker run --entrypoint /docker/test/all ${{ needs.publish_example_local.outputs.tag }}

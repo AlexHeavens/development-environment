@@ -15,4 +15,4 @@ docker run --rm \
     --hostname $(hostname) \
 	  --volume /tmp/.X11-unix:/tmp/.X11-unix --env "DISPLAY=$DISPLAY" \
 	  $interactive_arguments \
-    development-environment $run_arguments
+    aheavens/development-environment:local $run_arguments

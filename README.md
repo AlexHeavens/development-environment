@@ -15,5 +15,5 @@ A repeatable, containerised development environment available with a single comm
 
 ## Running smoke tests
 ```bash
-./build && ./test
+./build && ./common_commands.bats
 ```

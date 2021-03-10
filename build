@@ -9,7 +9,8 @@ build_arguments=$@
 
 # Build args ensure container's basic user permissions match host.
 docker build \
-  --tag aheavens/development-environment:temp docker \
+  --tag aheavens/development-environment:local . \
+    --file docker/Dockerfile \
 	  --build-arg "user=$(whoami)" \
 	  --build-arg "user_id=$(id --user)" \
 	  --build-arg "group_id=$(id --group)" \
