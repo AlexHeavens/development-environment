@@ -7,6 +7,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - run: |
-          ./build
-          mock_DISPLAY=:0.0 # no X11 on CI
-          DISPLAY=$mock_DISPLAY ./test
+          mock_DISPLAY=:0.0 # no X11 in CI
+          DISPLAY=$mock_DISPLAY \
+            docker-compose --file docker/docker-compose.test.yml up
